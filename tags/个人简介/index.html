@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html 
+	lang="ch">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+<link rel="stylesheet" href="/css/layout.css">
+
+		
+		<title> 标签：个人简介 -  Hello, world!</title>
+		<!-- <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" /> -->
+		<!-- <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script> -->
+		
+<link rel="stylesheet" href="/lib/mdui/mdui.min.css">
+
+		
+<script src="/lib/mdui/mdui.min.js"></script>
+
+		<!-- lazyload -->
+		
+<script src="/lib/lazysizes.js"></script>
+
+		<!-- smooth-scrolling -->
+		
+<script src="/lib/smooth-scrolling.js"></script>
+
+		<!-- highlight -->
+		
+<link rel="stylesheet" href="/lib/highlight/atom-one-dark.min.css">
+
+		
+<script src="/lib/highlight/highlight.min.js"></script>
+
+		<!-- 预置 kiraicon -->
+		
+<link rel="stylesheet" href="/lib/iconfont/iconfont.css">
+
+		
+		<link
+			rel="shortcut icon"
+			href="/images/avatar.jpg"
+			type="image/jpeg"
+		/>
+		
+<link rel="stylesheet" href="/deps/css/APlayer.min.css">
+
+		
+		
+<script src="/deps/js/APlayer.min.js"></script>
+<script src="/deps/js/Meting.min.js"></script>
+
+	<meta name="generator" content="Hexo 8.1.1"></head>
+
+	<body>
+		<div
+			class="kira-background"
+			style="background-image: url('/images/background.jpg')"
+		></div>
+		<div class="kira-header">
+    <a
+        class="kira-drawer-button mdui-ripple"
+        title="导航栏"
+        onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
+    >
+        <i class="kirafont icon-menu"></i>
+    </a>
+    <a href="/" title="Hello, world!">
+        <img
+			src="/images/avatar.jpg"
+			alt="uakira"
+		/>
+    </a>
+</div>
+		<div class="kira-body">
+			<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="/images/avatar.jpg" title="uakira">
+			<img
+				src="/images/avatar.jpg"
+				alt="uakira"
+			/>
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>3</div>
+		<div><span>标签</span>3</div>
+		<div><span>分类</span>1</div>
+	</div>
+	<div class="kira-list">
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/"
+			title="回到首页"
+		>
+			<i
+				class="kirafont
+					
+						icon-home
+					"
+			></i>
+			<div class="kira-list-item-content">
+				回到首页
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/archive.html"
+			title="文章归档"
+		>
+			<i
+				class="kirafont
+					
+						icon-container
+					"
+			></i>
+			<div class="kira-list-item-content">
+				文章归档
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			href="/hello-world/"
+			title="关于本人"
+		>
+			<i
+				class="kirafont
+					
+						icon-user
+					"
+			></i>
+			<div class="kira-list-item-content">
+				关于本人
+			</div>
+		</a>
+		
+		<a
+			class="kira-list-item mdui-ripple false"
+			target="_blank" rel="noopener" href="https://lostparadisefmz.github.io"
+			title="我的朋友"
+		>
+			<i
+				class="kirafont
+					
+						icon-team
+					"
+			></i>
+			<div class="kira-list-item-content">
+				我的朋友
+			</div>
+		</a>
+		
+	</div>
+	<aside id="kira-sidebar">
+		
+			<div class="kira-widget-wrap">
+	<div class="kira-widget kira-social">
+		
+			<a
+				class="mdui-ripple"
+				href="tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=<去掉尖括号后填上你的QQ号>&website=www.oicqzone.com"
+				target="_blank"
+				mdui-tooltip="{content: 'QQ'}"
+				style="color: rgb(49, 174, 255); background-color: rgba(49, 174, 255, .1);"
+			>
+				<i
+					class="kirafont
+					
+						icon-QQ
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://space.bilibili.com/3494369394952807?spm_id_from=333.1007.0.0"
+				target="_blank"
+				mdui-tooltip="{content: '哔哩哔哩'}"
+				style="color: rgb(231, 106, 141); background-color: rgba(231, 106, 141, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-bilibili
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://github.com/xyberic"
+				target="_blank"
+				mdui-tooltip="{content: 'GitHub'}"
+				style="color: rgb(25, 23, 23); background-color: rgba(25, 23, 23, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-github
+					"
+				></i>
+			</a>
+		
+			<a
+				class="mdui-ripple"
+				href="https://gitee.com/<你的gitee id>"
+				target="_blank"
+				mdui-tooltip="{content: 'Gitee'}"
+				style="color: rgb(165, 15, 15); background-color: rgba(165, 15, 15, .15);"
+			>
+				<i
+					class="kirafont
+					
+						icon-gitee
+					"
+				></i>
+			</a>
+		
+	</div>
+</div>
+
+		
+			
+  <div class="kira-widget-wrap">
+    <h3 class="kira-widget-title">分类</h3>
+    <div class="kira-widget">
+      <ul class="category-list">
+        
+        
+
+        
+          <li class="category-list-item">
+            <a class="category-list-link" href="/categories/关于本人/">
+              关于本人
+            </a>
+            <span class="category-list-count">1</span>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+		
+			
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<a href="/tags/%E4%B8%AA%E4%BA%BA%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">个人简介</a> <a href="/tags/%E5%85%B7%E8%BA%AB%E6%99%BA%E8%83%BD/" style="font-size: 10px;">具身智能</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 10px;">机器人</a>
+		</div>
+		
+	</div>
+
+
+		
+			
+	<div class="kira-widget-wrap">
+		<h3 class="kira-widget-title">
+			文章归档
+		</h3>
+		<div class="kira-widget">
+			<ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/">2026</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/">2025</a><span class="archive-list-count">2</span></li></ul>
+		</div>
+	</div>
+
+
+		
+	</aside>
+	<div class="kira-copyright">
+		&copy; 2026
+		<a href="/">uakira</a>
+		Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &
+		<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+		<br />
+		
+		
+	</div>
+</div>
+<div
+	class="kira-sidebar-modal"
+	id="sidebar-modal"
+	onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"
+></div>
+			<div class="kira-content">
+				<div id="kira-top-header"></div>
+				<div class="kira-main-content">
+					<div class="kira-posts">
+    
+        <div class="kira-post">
+            <a href="/hello-world/">
+                
+                <div
+                    class="kira-post-cover mdui-ripple"
+                    style="padding-bottom: '56.25%'"
+                >
+                    <img
+                        data-src="/images/background.jpg"
+                        data-sizes="auto"
+                        alt="关于本人 | About Me"
+                        class="lazyload"
+                    />
+                    <h1>关于本人 | About Me</h1>
+                </div>
+                
+            </a>
+
+            <div class="kira-post-meta kira-rainbow">
+                <a>
+                    <i class="kirafont icon-calendar-fill"></i>
+                    2025年10月27日
+                </a>
+                <a>
+                    <i class="kirafont icon-edit-fill"></i>
+                    1.9k 字
+                </a>
+                <a>
+                    <i class="kirafont icon-time-circle-fill"></i>大概
+                    7 分钟
+                </a>
+            </div>
+    
+            
+        </div>
+        <div class="kira-hr"></div>
+    
+</div>
+
+				</div>
+			</div>
+			<div class="kira-right-column">
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+		<button class="mdui-fab mdui-ripple">
+			<i class="kirafont icon-caret-up"></i>
+		</button>
+	</a>
+</div>
+
+		</div>
+		<!-- Gemini 博客悬浮 AI 伴读助理 -->
+<style>
+  #gemini-floating-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 84px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .gemini-fab {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    user-select: none;
+  }
+
+  .gemini-fab:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  }
+
+  .gemini-fab svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s;
+  }
+
+  .gemini-fab-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #10b981;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+
+  /* 聊天弹窗卡片 */
+  .gemini-chat-card {
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    width: 360px;
+    height: 520px;
+    max-height: calc(100vh - 100px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 20px;
+    box-shadow: 0 12px 36px -4px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9) translateY(10px);
+  }
+
+  .gemini-chat-card.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
+  }
+
+  /* 头部 */
+  .gemini-chat-header {
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .gemini-chat-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .gemini-chat-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .gemini-chat-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+
+  .gemini-chat-status {
+    font-size: 11px;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .gemini-chat-status::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+
+  .gemini-chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .gemini-icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    color: #64748b;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gemini-icon-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #0f172a;
+  }
+
+  /* 消息区 */
+  .gemini-chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .gemini-msg {
+    max-width: 86%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    word-break: break-word;
+  }
+
+  .gemini-msg-ai {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #1e293b;
+    border-bottom-left-radius: 4px;
+  }
+
+  .gemini-msg-user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .gemini-msg-loading {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+  }
+
+  .gemini-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+    animation: gemini-bounce 1.4s infinite ease-in-out both;
+  }
+
+  .gemini-dot:nth-child(1) { animation-delay: -0.32s; }
+  .gemini-dot:nth-child(2) { animation-delay: -0.16s; }
+
+  @keyframes gemini-bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  /* 输入区 */
+  .gemini-chat-footer {
+    padding: 12px 14px;
+    border-top: 1px solid rgba(226, 232, 240, 0.7);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .gemini-input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #1e293b;
+    outline: none;
+    background: #f8fafc;
+    transition: all 0.2s;
+  }
+
+  .gemini-input:focus {
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+  }
+
+  .gemini-send-btn {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .gemini-send-btn:hover {
+    opacity: 0.92;
+    transform: scale(1.02);
+  }
+
+  .gemini-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 640px) {
+    #gemini-floating-widget {
+      right: 20px;
+      bottom: 80px;
+    }
+    .gemini-chat-card {
+      width: calc(100vw - 32px);
+      right: -8px;
+      bottom: 56px;
+      height: 75vh;
+    }
+  }
+</style>
+
+<div id="gemini-floating-widget">
+  <!-- 浮动按钮 -->
+  <div class="gemini-fab" id="geminiFab" title="点击与 AI 伴读助手对话">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+    <span class="gemini-fab-badge">AI</span>
+  </div>
+
+  <!-- 聊天卡片面板 -->
+  <div class="gemini-chat-card" id="geminiChatCard">
+    <!-- 头部 -->
+    <div class="gemini-chat-header">
+      <div class="gemini-chat-title">
+        <div class="gemini-chat-avatar">✦</div>
+        <div>
+          <div class="gemini-chat-name">Gemini 3.8 博客助手</div>
+          <div class="gemini-chat-status">在线 (Google AI)</div>
+        </div>
+      </div>
+      <div class="gemini-chat-actions">
+        <button class="gemini-icon-btn" id="geminiClearBtn" title="清空对话">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+        <button class="gemini-icon-btn" id="geminiCloseBtn" title="关闭窗口">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 消息列表 -->
+    <div class="gemini-chat-body" id="geminiChatBody">
+      <div class="gemini-msg gemini-msg-ai">
+        嗨！我是站长 <strong>uakira</strong> 博客的 AI 伴读助手（Powered by Gemini 3.8 Flash）✨<br><br>
+        你可以向我提问关于本博客的文章内容、咨询站长的学业与技术分享、或者探讨任何 ACGN 动漫与前沿科技话题！有什么想聊的吗？
+      </div>
+    </div>
+
+    <!-- 输入栏 -->
+    <div class="gemini-chat-footer">
+      <input type="text" class="gemini-input" id="geminiInput" placeholder="输入您想问的问题..." autocomplete="off">
+      <button class="gemini-send-btn" id="geminiSendBtn" title="发送">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const GEMINI_API_KEY = "AIzaSyCiYAuwah1SFcUaFvkpxOAgLH9tpfTMVAg";
+  const PRIMARY_MODEL = "gemini-3.8-flash";
+  const FALLBACK_MODEL = "gemini-2.5-flash";
+
+  async function requestGemini(contents, model) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    return await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: contents,
+        systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
+      })
+    });
+  }
+
+  const SYSTEM_INSTRUCTION = [
+    "【核心角色设定】",
+    "你是运行在博主 uakira（网名 xyberic）个人博客上的【AI 伴读助手】（基于 Google Gemini 3.8 Flash）。",
+    "",
+    "【重要原则与绝对禁令】",
+    "1. 严格区分身份：你是一个人工智能助手（AI），绝对不是站长本人！严禁模仿站长的口吻冒充站长，严禁以站长的第一人称（“我”）自居。",
+    "2. 人称规范：",
+    "   - 提及你自己时，你始终是【博客 AI 助手】；",
+    "   - 提及站长时，必须始终使用第三人称（如“站长”、“uakira”、“博主”），严禁说“我是 uakira”或将站长的经历代入自己（例如严禁说“我在上海纽约大学读书”、“我写的这篇博客”，而应说“站长 uakira 目前就读于上海纽约大学”、“这是站长写的博客文章”）。",
+    "3. 交互职责：",
+    "   - 帮助访客阅读和理解博文内容，解答技术、算法、前端开发等相关问题；",
+    "   - 与访客友好探讨 ACGN/动漫文化与计算机科学前沿话题；",
+    "   - 当访客问及站长时，以礼貌客观的第三人称介绍站长（上海纽约大学在读，热爱技术探索与二次元文化）；",
+    "   - 语言亲切生动、有礼貌、保持专业且富有 AI 助手的边界感。"
+  ].join("\n");
+
+  let conversationHistory = [];
+
+  const fab = document.getElementById('geminiFab');
+  const card = document.getElementById('geminiChatCard');
+  const closeBtn = document.getElementById('geminiCloseBtn');
+  const clearBtn = document.getElementById('geminiClearBtn');
+  const input = document.getElementById('geminiInput');
+  const sendBtn = document.getElementById('geminiSendBtn');
+  const body = document.getElementById('geminiChatBody');
+
+  // 展开 / 收起
+  fab.addEventListener('click', () => {
+    card.classList.toggle('open');
+    if (card.classList.contains('open')) {
+      input.focus();
+    }
+  });
+
+  closeBtn.addEventListener('click', () => card.classList.remove('open'));
+
+  // 清空对话
+  clearBtn.addEventListener('click', () => {
+    conversationHistory = [];
+    body.innerHTML = `
+      <div class="gemini-msg gemini-msg-ai">
+        对话记录已重置。有什么我可以帮您的吗？
+      </div>
+    `;
+  });
+
+  // 发送消息
+  async function doSend() {
+    const text = input.value.trim();
+    if (!text || sendBtn.disabled) return;
+
+    // 用户消息气泡
+    appendMessage('user', text);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    // 记录历史
+    conversationHistory.push({ role: 'user', parts: [{ text: text }] });
+
+    // Loading 占位
+    const loadingElem = showLoading();
+
+    try {
+      // 优先调用 3.8 模型
+      let resp = await requestGemini(conversationHistory, PRIMARY_MODEL);
+
+      // 若 3.8 遇到 503 (官方负载过高)、429 或其他异常，无缝自动降级到稳定版，用户零感知
+      if (!resp.ok) {
+        console.warn(`[Gemini] ${PRIMARY_MODEL} 状态码 ${resp.status}，正在自动平滑切换至稳定节点...`);
+        const fallbackResp = await requestGemini(conversationHistory, FALLBACK_MODEL);
+        if (fallbackResp.ok) {
+          resp = fallbackResp;
+        }
+      }
+
+      loadingElem.remove();
+
+      if (!resp.ok) {
+        throw new Error('API 返回错误 ' + resp.status);
+      }
+
+      const data = await resp.json();
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '抱歉，暂时未能生成回复。';
+      
+      conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+      appendMessage('ai', formatMarkdown(reply));
+    } catch (err) {
+      if (loadingElem) loadingElem.remove();
+      appendMessage('ai', '连接 Gemini 服务出错: ' + err.message + '。<br><span style="font-size:11px;color:#94a3b8;">提示：Google API 需要使用海外合规节点（如美区、日区；港区及国内直连会被 Google 拦截）。</span>');
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', doSend);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      doSend();
+    }
+  });
+
+  function appendMessage(sender, content) {
+    const msg = document.createElement('div');
+    msg.className = `gemini-msg gemini-msg-${sender}`;
+    msg.innerHTML = content;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showLoading() {
+    const loading = document.createElement('div');
+    loading.className = 'gemini-msg gemini-msg-ai gemini-msg-loading';
+    loading.innerHTML = '<span class="gemini-dot"></span><span class="gemini-dot"></span><span class="gemini-dot"></span>';
+    body.appendChild(loading);
+    body.scrollTop = body.scrollHeight;
+    return loading;
+  }
+
+  function formatMarkdown(text) {
+    // 基础 Markdown 换行与粗体转换
+    return text
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.06);padding:2px 4px;border-radius:4px;font-size:12px;">$1</code>')
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  }
+})();
+</script>
+
+	</body>
+</html>
