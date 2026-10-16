@@ -721,9 +721,20 @@
 
 <script>
 (function() {
-  const GEMINI_API_KEY = "AIzaSyCiYAuwah1SFcUaFvkpxOAgLH9tpfTMVAg";
-  const MODEL_NAME = "gemini-3.8-flash";
-  const API_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`;
+  const PRIMARY_MODEL = "gemini-3.8-flash";
+  const FALLBACK_MODEL = "gemini-2.5-flash";
+
+  async function requestGemini(contents, model) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    return await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: contents,
+        systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
+      })
+    });
+  }
 
   const SYSTEM_INSTRUCTION = "你是由上海纽约大学在读学生 uakira（网名 xyberic）的个人博客所搭载的 AI 伴读助手。\n" +
     "你态度亲切、语气活泼幽默，热爱 ACGN/动漫文化与计算机科学。\n" +
@@ -776,18 +787,14 @@
     const loadingElem = showLoading();
 
     try {
-      const payload = {
-        contents: conversationHistory,
-        systemInstruction: {
-          parts: [{ text: SYSTEM_INSTRUCTION }]
-        }
-      };
+      // 优先调用 3.8 模型
+      let resp = await requestGemini(conversationHistory, PRIMARY_MODEL);
 
-      const resp = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // 若 3.8 遇到 503 (官方负载过高) 或 429，无缝自动降级到稳定版，用户零感知
+      if (!resp.ok && (resp.status === 503 || resp.status === 429 || resp.status === 404)) {
+        console.warn(`[Gemini] ${PRIMARY_MODEL} 状态码 ${resp.status}，正在自动平滑切换至稳定节点...`);
+        resp = await requestGemini(conversationHistory, FALLBACK_MODEL);
+      }
 
       loadingElem.remove();
 
@@ -802,7 +809,7 @@
       appendMessage('ai', formatMarkdown(reply));
     } catch (err) {
       if (loadingElem) loadingElem.remove();
-      appendMessage('ai', '连接 Gemini 服务出错: ' + err.message + '。请稍后再试。');
+      appendMessage('ai', '连接 Gemini 服务出错: ' + err.message + '。<br><span style="font-size:11px;color:#94a3b8;">提示：Google API 需要使用海外合规节点（如美区、日区；港区及国内直连会被 Google 拦截）。</span>');
     } finally {
       sendBtn.disabled = false;
       input.focus();
