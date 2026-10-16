@@ -820,7 +820,7 @@
       <div class="gemini-chat-title">
         <div class="gemini-chat-avatar">✦</div>
         <div>
-          <div class="gemini-chat-name">Gemini 3.8 博客助手</div>
+          <div class="gemini-chat-name">Gemini 3.6 博客助手</div>
           <div class="gemini-chat-status">在线 (Google AI)</div>
         </div>
       </div>
@@ -847,8 +847,15 @@
         <span id="geminiEngineStatus" style="font-size:11px;color:#10b981;font-weight:normal;">检测中...</span>
       </div>
       <div style="font-size:11px;color:#64748b;margin-bottom:8px;line-height:1.5;">
-        • <strong>本地极速通道</strong>：电脑运行 <code>start_studio.bat</code> 自动激活，免 Key 畅聊且无 429 限制。<br>
-        • <strong>访客/公网使用</strong>：可配置个人免费 Gemini API Key 避免官方公网限频。
+        • <strong>本地账号引擎</strong>：已适配 <strong>Gemini 3.6 Flash</strong> 与 <strong>Gemini 3.1 Pro</strong>，免 Key 畅聊且无 429 限制。<br>
+        • <strong>访客/公网使用</strong>：可配置个人免费 Gemini API Key 避免公网限频。
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:11px;font-weight:600;color:#475569;display:block;margin-bottom:3px;">模型选择:</label>
+        <select id="geminiModelSelect" style="width:100%;border:1px solid #cbd5e1;border-radius:6px;padding:5px 8px;font-size:11px;outline:none;background:#fff;color:#1e293b;" onchange="localStorage.setItem('gemini_selected_model', this.value)">
+          <option value="gemini-3.6-flash">⚡ Gemini 3.6 Flash (极速 / 默认推荐)</option>
+          <option value="gemini-3.1-pro">🧠 Gemini 3.1 Pro (深度推理 / 复杂逻辑)</option>
+        </select>
       </div>
       <input type="password" id="geminiCustomKeyInput" placeholder="输入个人 Gemini API Key (以 AIzaSy 开头)" style="width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;margin-bottom:6px;outline:none;">
       <div style="display:flex;gap:6px;">
@@ -863,7 +870,7 @@
     <!-- 消息列表 -->
     <div class="gemini-chat-body" id="geminiChatBody">
       <div class="gemini-msg gemini-msg-ai">
-        嗨！我是站长 <strong>uakira</strong> 博客的 AI 伴读助手（Powered by Gemini 3.8 Flash）✨<br><br>
+        嗨！我是站长 <strong>uakira</strong> 博客的 AI 伴读助手（Powered by Gemini 3.6 Flash / 3.1 Pro）✨<br><br>
         你可以向我提问关于本博客的文章内容、咨询站长的学业与技术分享、或者探讨任何 ACGN 动漫与前沿科技话题！有什么想聊的吗？
       </div>
     </div>
@@ -885,7 +892,7 @@
 
   const SYSTEM_INSTRUCTION = [
     "【核心角色设定】",
-    "你是运行在博主 uakira（网名 xyberic）个人博客上的【AI 伴读助手】（基于 Google Gemini 3.8 Flash）。",
+    "你是运行在博主 uakira（网名 xyberic）个人博客上的【AI 伴读助手】（基于 Google Gemini 3.6 Flash / 3.1 Pro）。",
     "",
     "【重要原则与绝对禁令】",
     "1. 严格区分身份：你是一个人工智能助手（AI），绝对不是站长本人！严禁模仿站长的口吻冒充站长，严禁以站长的第一人称（“我”）自居。",
@@ -1013,6 +1020,7 @@
           }))
         ];
 
+        const selectedModel = localStorage.getItem('gemini_selected_model') || 'gemini-3.6-flash';
         const localResp = await fetch('http://127.0.0.1:8000/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -1020,7 +1028,7 @@
             'Authorization': 'Bearer sk-gemini-web'
           },
           body: JSON.stringify({
-            model: 'gemini-web',
+            model: selectedModel,
             messages: msgs
           })
         });
@@ -1955,10 +1963,10 @@
     </div>
   </div>
 
-  <!-- AI Copilot 写作助手条 (Gemini 3.8 Flash 直连) -->
+  <!-- AI Copilot 写作助手条 (Gemini 3.6 Flash / 3.1 Pro 引擎) -->
   <div class="ws-ai-bar">
     <div class="ws-ai-actions">
-      <span class="ws-ai-tag">✨ Gemini 3.8 Copilot:</span>
+      <span class="ws-ai-tag">✨ Gemini 3.6 Copilot:</span>
       <button class="ws-ai-btn" id="wsBtnAiWrite" onclick="wsAiGeneratePost()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         AI 帮我写博文
