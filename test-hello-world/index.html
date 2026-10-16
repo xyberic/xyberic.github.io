@@ -761,7 +761,14 @@
           <option value="gemini-3.1-pro">🧠 Gemini 3.1 Pro (深度推理 / 复杂逻辑)</option>
         </select>
       </div>
-      <input type="password" id="geminiCustomKeyInput" placeholder="输入个人 Gemini API Key (以 AIzaSy 开头)" style="width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;margin-bottom:6px;outline:none;">
+      <div style="margin-bottom:6px;">
+        <label style="font-size:11px;font-weight:600;color:#475569;display:block;margin-bottom:3px;">云端 Cloudflare Worker 地址 (推荐):</label>
+        <input type="text" id="geminiWorkerUrlInput" placeholder="https://your-worker.workers.dev" style="width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;outline:none;">
+      </div>
+      <div style="margin-bottom:6px;">
+        <label style="font-size:11px;font-weight:600;color:#475569;display:block;margin-bottom:3px;">个人 Google Gemini API Key (可选备用):</label>
+        <input type="password" id="geminiCustomKeyInput" placeholder="输入个人 Key (AIzaSy...)" style="width:100%;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;padding:6px 8px;font-size:11px;outline:none;">
+      </div>
       <div style="display:flex;gap:6px;">
         <button onclick="saveGeminiSettings()" style="flex:1;background:#6366f1;color:#fff;border:none;border-radius:6px;padding:6px;cursor:pointer;font-size:11px;font-weight:600;">保存配置</button>
         <button onclick="clearGeminiSettings()" style="background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:11px;">清除</button>
@@ -828,27 +835,32 @@
     p.style.display = isShowing ? 'none' : 'block';
     if (!isShowing) {
       const savedKey = localStorage.getItem('gemini_user_api_key') || '';
+      const savedWorker = localStorage.getItem('gemini_cf_worker_url') || '';
+      const savedModel = localStorage.getItem('gemini_selected_model') || 'gemini-3.6-flash';
       document.getElementById('geminiCustomKeyInput').value = savedKey;
+      document.getElementById('geminiWorkerUrlInput').value = savedWorker;
+      document.getElementById('geminiModelSelect').value = savedModel;
       checkEngineStatus();
     }
   };
 
   window.saveGeminiSettings = function() {
     const k = (document.getElementById('geminiCustomKeyInput')?.value || '').trim();
-    if (k) {
-      localStorage.setItem('gemini_user_api_key', k);
-      alert('✅ 个人 API Key 已保存到本地浏览器！');
-    } else {
-      localStorage.removeItem('gemini_user_api_key');
-      alert('已清除自定义 Key，将恢复默认通道。');
-    }
+    const w = (document.getElementById('geminiWorkerUrlInput')?.value || '').trim();
+    if (k) localStorage.setItem('gemini_user_api_key', k);
+    else localStorage.removeItem('gemini_user_api_key');
+    if (w) localStorage.setItem('gemini_cf_worker_url', w);
+    else localStorage.removeItem('gemini_cf_worker_url');
+    alert('✅ AI 通道与云端 Worker 配置已保存！');
     toggleGeminiSettings();
   };
 
   window.clearGeminiSettings = function() {
     localStorage.removeItem('gemini_user_api_key');
+    localStorage.removeItem('gemini_cf_worker_url');
     document.getElementById('geminiCustomKeyInput').value = '';
-    alert('已清除个人 API Key。');
+    document.getElementById('geminiWorkerUrlInput').value = '';
+    alert('已清除云端 Worker 与个人 API Key 配置。');
   };
 
   window.saveInlineKey = function() {
@@ -879,6 +891,13 @@
       }
     } catch(e) {}
 
+    const cfWorkerUrl = localStorage.getItem('gemini_cf_worker_url');
+    if (cfWorkerUrl) {
+      if (statusEl) statusEl.innerHTML = '在线 (云端 Worker)';
+      if (panelStatus) panelStatus.innerHTML = '<span style="color:#10b981;">● Cloudflare 云端已连接</span>';
+      return true;
+    }
+
     const customKey = localStorage.getItem('gemini_user_api_key');
     if (statusEl) statusEl.innerHTML = customKey ? '在线 (专属 Key)' : '在线 (Google AI)';
     if (panelStatus) panelStatus.innerHTML = '<span style="color:#6366f1;">● Google 官方通道</span>';
@@ -906,9 +925,33 @@
     `;
   });
 
-  // 多通道智能请求 (本地极速 Web2API -> Studio 后台 -> 官方 API)
+  // 多通道智能请求 (Cloudflare Worker -> 本地极速 Web2API -> Studio 后台 -> 官方 API)
   async function requestGeminiService(history) {
-    // 1. 优先尝试本地极速 Web2API (端口 8000，无限额度免 API Key)
+    // 0. 优先尝试云端 Cloudflare Worker 全托管代理 (若已配置，24小时全球秒级响应，永不断线免开机)
+    const cfWorkerUrl = (localStorage.getItem('gemini_cf_worker_url') || '').trim();
+    if (cfWorkerUrl) {
+      try {
+        const msgs = history.map(m => ({
+          role: m.role === 'model' ? 'assistant' : m.role,
+          content: m.parts?.[0]?.text || ''
+        }));
+        const selectedModel = localStorage.getItem('gemini_selected_model') || 'gemini-3.6-flash';
+        const cfResp = await fetch(cfWorkerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: msgs,
+            model: selectedModel
+          })
+        });
+        if (cfResp.ok) {
+          const cfData = await cfResp.json();
+          if (cfData.reply) return { ok: true, text: cfData.reply, source: 'cloudflare' };
+        }
+      } catch(e) {}
+    }
+
+    // 1. 尝试本地极速 Web2API (端口 8000，无限额度免 API Key)
     try {
       const controller = new AbortController();
       const tid = setTimeout(() => controller.abort(), 1200);
@@ -2287,10 +2330,29 @@
   };
 
   // =======================================================
-  // 3. 集成 Gemini AI Copilot (本地优先极速通道 + 官方通道容灾)
+  // 3. 集成 Gemini AI Copilot (云端 Worker -> 本地极速通道 -> 官方通道)
   // =======================================================
   async function callGeminiApi(promptText) {
-    // 1. 优先尝试本地 Web2API 极速通道 (端口 8000，无限额度免 API Key)
+    // 0. 优先尝试云端 Cloudflare Worker (若已配置)
+    const cfWorkerUrl = (localStorage.getItem('gemini_cf_worker_url') || '').trim();
+    if (cfWorkerUrl) {
+      try {
+        const cfResp = await fetch(cfWorkerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: promptText }],
+            model: localStorage.getItem('gemini_selected_model') || 'gemini-3.6-flash'
+          })
+        });
+        if (cfResp.ok) {
+          const cfData = await cfResp.json();
+          if (cfData.reply) return cfData.reply;
+        }
+      } catch(e) {}
+    }
+
+    // 1. 尝试本地 Web2API 极速通道 (端口 8000，无限额度免 API Key)
     try {
       const controller = new AbortController();
       const tid = setTimeout(() => controller.abort(), 1200);
