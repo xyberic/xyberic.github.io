@@ -830,25 +830,30 @@
 })();
 </script>
 
-		<!-- 站长后台管理入口弹窗组件 -->
+		<!-- 网页内嵌纯前端 Studio 创作工作台与身份验证组件 -->
+<!-- 不需要依赖 localhost，直接在网页内完成文章撰写、独立封面设置、Gemini 3.8 AI 写作与一键发布 -->
+
+<script src="https://unpkg.com/marked@4.3.0/marked.min.js"></script>
+
 <style>
+  /* 登录身份验证弹窗遮罩 */
   #studio-login-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(15, 23, 42, 0.65);
+    background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    z-index: 99999;
+    z-index: 99998;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 
   #studio-login-modal-overlay.open {
@@ -994,31 +999,446 @@
     text-align: center;
   }
 
-  .studio-success-box {
+  /* ======================================================= */
+  /* 网页内嵌全屏创作工作台 (In-Page Web Studio) */
+  /* ======================================================= */
+  #web-studio-workspace {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background: #f8fafc;
     display: none;
-    text-align: center;
-    padding: 12px 0;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    overflow: hidden;
   }
 
-  .studio-direct-link {
-    display: inline-block;
-    margin-top: 10px;
-    background: #10b981;
-    color: white;
-    padding: 9px 16px;
-    border-radius: 10px;
-    text-decoration: none;
+  #web-studio-workspace.open {
+    display: flex;
+  }
+
+  /* 顶部导航条 */
+  .ws-navbar {
+    height: 52px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  .ws-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ws-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 11px;
     font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
     transition: all 0.2s;
   }
 
-  .studio-direct-link:hover {
+  .ws-back-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .ws-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ws-brand span {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ws-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .ws-user-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+
+  .ws-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ws-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .ws-btn-ghost {
+    background: transparent;
+    color: #64748b;
+    border-color: #e2e8f0;
+  }
+
+  .ws-btn-ghost:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .ws-btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  }
+
+  .ws-btn-primary:hover {
+    opacity: 0.93;
+    transform: translateY(-1px);
+  }
+
+  .ws-btn-success {
+    background: #10b981;
+    color: white;
+    font-weight: 600;
+  }
+
+  .ws-btn-success:hover {
     background: #059669;
+  }
+
+  /* 文章元信息栏 */
+  .ws-meta-bar {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .ws-title-input {
+    flex: 1;
+    min-width: 240px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 6px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .ws-title-input:focus {
+    border-bottom-color: #6366f1;
+  }
+
+  .ws-meta-field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4px 10px;
+  }
+
+  .ws-meta-field input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    color: #1e293b;
+  }
+
+  .ws-meta-field input::placeholder {
+    color: #94a3b8;
+  }
+
+  /* 封面缩略预览微件 */
+  .ws-cover-preview-badge {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    max-width: 140px;
+    height: 24px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 10px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ws-cover-preview-badge img {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+
+  /* AI Copilot 工具条 */
+  .ws-ai-bar {
+    background: linear-gradient(90deg, rgba(238, 242, 255, 0.8), rgba(245, 243, 255, 0.8));
+    border-bottom: 1px solid #e0e7ff;
+    padding: 6px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .ws-ai-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ws-ai-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 4px;
+  }
+
+  .ws-ai-btn {
+    background: #ffffff;
+    border: 1px solid #c7d2fe;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #4338ca;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+  }
+
+  .ws-ai-btn:hover {
+    background: #eef2ff;
+    border-color: #818cf8;
+    transform: translateY(-1px);
+  }
+
+  .ws-ai-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* 编辑器主体分栏 */
+  .ws-editor-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .ws-pane-left {
+    width: 50%;
+    height: 100%;
+    border-right: 1px solid #e2e8f0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ws-textarea {
+    flex: 1;
+    width: 100%;
+    padding: 18px 24px;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #1e293b;
+    background: transparent;
+  }
+
+  .ws-pane-right {
+    width: 50%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 24px 32px;
+    background: #fafafa;
+    box-sizing: border-box;
+  }
+
+  .ws-preview-container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* 预览里的封面图 */
+  .ws-preview-cover-box {
+    display: none;
+    width: 100%;
+    height: 220px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+
+  .ws-preview-cover-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ws-preview-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 10px;
+  }
+
+  .ws-preview-meta {
+    font-size: 12px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .ws-preview-tags {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+  }
+
+  .ws-preview-tag {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  .ws-preview-content {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #334155;
+  }
+
+  .ws-preview-content h1, .ws-preview-content h2, .ws-preview-content h3 {
+    color: #0f172a;
+    margin-top: 1.5em;
+    margin-bottom: 0.6em;
+    font-weight: 700;
+  }
+
+  .ws-preview-content p {
+    margin-bottom: 1em;
+  }
+
+  .ws-preview-content ul, .ws-preview-content ol {
+    padding-left: 1.4em;
+    margin-bottom: 1em;
+  }
+
+  .ws-preview-content code {
+    background: rgba(0,0,0,0.06);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .ws-preview-content pre {
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 14px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 12px;
+  }
+
+  .ws-preview-content blockquote {
+    border-left: 4px solid #6366f1;
+    padding-left: 14px;
+    color: #64748b;
+    margin: 1em 0;
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 800px) {
+    .ws-editor-body {
+      flex-direction: column;
+    }
+    .ws-pane-left, .ws-pane-right {
+      width: 100%;
+      height: 50%;
+    }
+    .ws-meta-bar {
+      gap: 6px;
+    }
+    .ws-meta-field {
+      width: 100%;
+    }
   }
 </style>
 
+<!-- 1. 站长身份验证弹窗 -->
 <div id="studio-login-modal-overlay">
   <div class="studio-login-card">
     <button class="studio-modal-close" onclick="closeStudioLoginModal()" title="关闭">
@@ -1031,8 +1451,8 @@
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
       </div>
-      <h3 class="studio-login-title">站长身份验证 (Studio)</h3>
-      <p class="studio-login-subtitle">验证成功后将进入博文创作与管理后台</p>
+      <h3 class="studio-login-title">站长管理认证 (Studio)</h3>
+      <p class="studio-login-subtitle">验证成功后将直接在当前网页打开创作工作台</p>
     </div>
 
     <!-- 登录表单 -->
@@ -1052,69 +1472,181 @@
 
       <button class="studio-submit-btn" onclick="submitStudioLogin()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-        验证并进入编辑界面
+        验证并直接在网页内开启工作台
       </button>
     </div>
+  </div>
+</div>
 
-    <!-- 成功后提示与链接 -->
-    <div id="studioSuccessBox" class="studio-success-box">
-      <div style="font-size:28px;margin-bottom:6px;">🎉</div>
-      <div style="font-size:14px;font-weight:600;color:#0f172a;margin-bottom:4px;">身份验证成功！</div>
-      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">已授权访问，若未自动打开请点击下方按钮：</div>
-      <a id="studioDirectBtn" href="http://127.0.0.1:5000" target="_blank" class="studio-direct-link">
-        🚀 立即打开 Studio 工作台 (127.0.0.1:5000)
-      </a>
-      <div style="font-size:11px;color:#94a3b8;margin-top:10px;line-height:1.4;">
-        提示：管理工作台运行在您的本地电脑端口 5000 上。<br>支持独立封面配置、AI 写作助手与一键部署。
+<!-- 2. 纯网页内嵌创作工作台 (In-Page Web Studio) -->
+<div id="web-studio-workspace">
+  <!-- 顶部导航栏 -->
+  <header class="ws-navbar">
+    <div class="ws-nav-left">
+      <button class="ws-back-btn" onclick="closeWebStudio()" title="返回博客">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        退出编辑
+      </button>
+      <div class="ws-brand">
+        ✦ <span>Hexo In-Page Studio</span>
+      </div>
+      <div class="ws-user-pill">
+        uakira065 (站长已认证)
+      </div>
+    </div>
+
+    <div class="ws-nav-actions">
+      <button class="ws-btn ws-btn-ghost" onclick="wsNewPost()" title="清空并新建文章">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        新建
+      </button>
+      <button class="ws-btn ws-btn-ghost" onclick="wsCopyMarkdown()" title="复制完整带 Frontmatter 的 Markdown">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        复制 MD
+      </button>
+      <button class="ws-btn ws-btn-ghost" onclick="wsDownloadMdFile()" title="下载为 .md 文件">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        下载 .md
+      </button>
+      <button class="ws-btn ws-btn-primary" onclick="wsSaveDraft()" title="保存到浏览器草稿箱">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        保存草稿
+      </button>
+      <button class="ws-btn ws-btn-success" onclick="wsPublish()" title="一键保存并发布上线">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m16 16-4-4-4 4"></path></svg>
+        一键发布
+      </button>
+      <button class="ws-btn ws-btn-ghost" style="color:#ef4444;" onclick="wsLogout()" title="退出登录状态">
+        登出
+      </button>
+    </div>
+  </header>
+
+  <!-- 文章元信息栏 (标题、独立封面、分类、标签) -->
+  <div class="ws-meta-bar">
+    <input type="text" id="wsInputTitle" class="ws-title-input" placeholder="输入文章标题 (例如：我的第一篇具身智能札记)..." oninput="wsRenderPreview()">
+    
+    <!-- 独立封面图配置栏 -->
+    <div class="ws-meta-field" title="为本篇博文设置独立封面图（如 /images/avatar.jpg、/images/background.jpg 或网络图片URL）">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+      <input type="text" id="wsInputCover" style="width:190px;" placeholder="独立封面图URL(/images/...)" oninput="wsRenderPreview()">
+      <div id="wsCoverBadge" class="ws-cover-preview-badge">
+        <img id="wsCoverThumb" src="" alt="封面预览">
+        <span>已设置封面</span>
+      </div>
+    </div>
+
+    <!-- 标签 -->
+    <div class="ws-meta-field">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+      <input type="text" id="wsInputTags" style="width:140px;" placeholder="标签 (逗号隔开)" oninput="wsRenderPreview()">
+    </div>
+
+    <!-- 分类 -->
+    <div class="ws-meta-field">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+      <input type="text" id="wsInputCategory" style="width:110px;" placeholder="分类 (如: 随笔)" oninput="wsRenderPreview()">
+    </div>
+
+    <!-- 文件名 -->
+    <div class="ws-meta-field">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <input type="text" id="wsInputFilename" style="width:130px;" placeholder="文件名 (xxx.md)">
+    </div>
+  </div>
+
+  <!-- AI Copilot 写作助手条 (Gemini 3.8 Flash 直连) -->
+  <div class="ws-ai-bar">
+    <div class="ws-ai-actions">
+      <span class="ws-ai-tag">✨ Gemini 3.8 Copilot:</span>
+      <button class="ws-ai-btn" id="wsBtnAiWrite" onclick="wsAiGeneratePost()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        AI 帮我写博文
+      </button>
+      <button class="ws-ai-btn" id="wsBtnAiPolish" onclick="wsAiPolishText()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 2 4 4-12 12H6v-4L18 2z"></path></svg>
+        AI 润色文本
+      </button>
+      <button class="ws-ai-btn" id="wsBtnAiContinue" onclick="wsAiContinueText()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 16 16 12 12 8"></polyline><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        智能续写下文
+      </button>
+      <button class="ws-ai-btn" id="wsBtnAiMeta" onclick="wsAiSuggestMeta()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+        AI 提炼标签与分类
+      </button>
+    </div>
+    <div style="font-size:11px;color:#64748b;" id="wsWordCount">字数: 0</div>
+  </div>
+
+  <!-- 双栏编辑区：左侧 Markdown 编辑，右侧实时 HTML 预览 -->
+  <div class="ws-editor-body">
+    <!-- 左侧编辑框 -->
+    <div class="ws-pane-left">
+      <textarea id="wsMarkdownInput" class="ws-textarea" placeholder="在这里写下 Markdown 正文内容... 支持快捷键，双栏实时渲染！" oninput="wsRenderPreview()"></textarea>
+    </div>
+
+    <!-- 右侧渲染预览 -->
+    <div class="ws-pane-right">
+      <div class="ws-preview-container">
+        <!-- 独立封面图渲染预览 -->
+        <div id="wsPreviewCoverBox" class="ws-preview-cover-box">
+          <img id="wsPreviewCoverImg" src="" alt="封面预览" onerror="this.parentElement.style.display='none'">
+        </div>
+
+        <h1 id="wsPreviewTitle" class="ws-preview-title">文章标题预览</h1>
+        <div class="ws-preview-meta">
+          <span>作者: uakira</span> • <span id="wsPreviewDate">2026-10-16</span>
+          <span id="wsPreviewTagsContainer" class="ws-preview-tags"></span>
+        </div>
+
+        <article id="wsPreviewContent" class="ws-preview-content"></article>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  function openStudioLoginModal() {
+(function() {
+  const GEMINI_API_KEY = "AIzaSyCiYAuwah1SFcUaFvkpxOAgLH9tpfTMVAg";
+  const PRIMARY_MODEL = "gemini-3.8-flash";
+  const FALLBACK_MODEL = "gemini-2.5-flash";
+
+  // 1. 登录验证弹窗控制
+  window.openStudioLoginModal = function() {
+    // 若已登录，直接进入网页内嵌工作台
+    if (sessionStorage.getItem('uakira_studio_auth') === '1' || localStorage.getItem('uakira_studio_auth') === '1') {
+      openWebStudio();
+      return;
+    }
+
     const overlay = document.getElementById('studio-login-modal-overlay');
     if (overlay) {
       overlay.classList.add('open');
-      const passInput = document.getElementById('studioInputPass');
-      if (passInput) {
-        passInput.value = '';
-        setTimeout(() => passInput.focus(), 150);
+      const pass = document.getElementById('studioInputPass');
+      if (pass) {
+        pass.value = '';
+        setTimeout(() => pass.focus(), 150);
       }
     }
-  }
+  };
 
-  function closeStudioLoginModal() {
+  window.closeStudioLoginModal = function() {
     const overlay = document.getElementById('studio-login-modal-overlay');
-    if (overlay) {
-      overlay.classList.remove('open');
-    }
-  }
+    if (overlay) overlay.classList.remove('open');
+  };
 
-  function submitStudioLogin() {
+  window.submitStudioLogin = function() {
     const user = (document.getElementById('studioInputUser')?.value || '').trim();
     const pass = document.getElementById('studioInputPass')?.value || '';
     const errBox = document.getElementById('studioErrorMsg');
-    const formBox = document.getElementById('studioLoginForm');
-    const succBox = document.getElementById('studioSuccessBox');
 
     if (user === 'uakira065' && pass === 'Caning800317') {
       if (errBox) errBox.style.display = 'none';
-      if (formBox) formBox.style.display = 'none';
-      if (succBox) succBox.style.display = 'block';
-
-      // 预先写入本地授权凭证，使 Studio 打开时免登录
-      try {
-        localStorage.setItem('studio_token', 'auth_uakira065_ok');
-      } catch(e) {}
-
-      // 尝试打开本地 Studio
-      const studioUrl = 'http://127.0.0.1:5000';
-      const win = window.open(studioUrl, '_blank');
-      if (!win) {
-        // 如果被浏览器弹窗拦截，留在当前界面点击按钮
-        console.warn('[Studio] 自动弹窗被浏览器拦截，请点击界面按钮直达。');
-      }
+      sessionStorage.setItem('uakira_studio_auth', '1');
+      localStorage.setItem('uakira_studio_auth', '1');
+      closeStudioLoginModal();
+      openWebStudio();
     } else {
       if (errBox) errBox.style.display = 'block';
       const passInput = document.getElementById('studioInputPass');
@@ -1123,14 +1655,374 @@
         passInput.select();
       }
     }
+  };
+
+  // 点击遮罩外侧关闭登录弹窗
+  document.getElementById('studio-login-modal-overlay')?.addEventListener('click', function(e) {
+    if (e.target === this) closeStudioLoginModal();
+  });
+
+  // =======================================================
+  // 2. 网页内嵌工作台 (In-Page Web Studio) 逻辑
+  // =======================================================
+  window.openWebStudio = function() {
+    const ws = document.getElementById('web-studio-workspace');
+    if (!ws) return;
+    ws.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // 如果当前处于博文详情页面，自动提取并载入当前页面内容供直接编辑修改
+    const currentPostTitle = document.querySelector('.kira-post-title, .kira-main-content h1')?.innerText?.trim();
+    const existingContent = document.getElementById('wsMarkdownInput').value;
+
+    if (!existingContent) {
+      // 检查是否有本地暂存的草稿
+      const savedDraft = localStorage.getItem('ws_draft_post');
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+          document.getElementById('wsInputTitle').value = draft.title || '';
+          document.getElementById('wsInputCover').value = draft.cover || '';
+          document.getElementById('wsInputTags').value = draft.tags || '';
+          document.getElementById('wsInputCategory').value = draft.category || '';
+          document.getElementById('wsInputFilename').value = draft.filename || 'post.md';
+          document.getElementById('wsMarkdownInput').value = draft.content || '';
+        } catch(e) {}
+      } else if (currentPostTitle) {
+        document.getElementById('wsInputTitle').value = currentPostTitle;
+        document.getElementById('wsInputFilename').value = location.pathname.replace(/^\/|\/$/g, '') + '.md';
+      }
+    }
+
+    wsRenderPreview();
+  };
+
+  window.closeWebStudio = function() {
+    const ws = document.getElementById('web-studio-workspace');
+    if (ws) ws.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  window.wsLogout = function() {
+    if (!confirm('确定退出当前站长登录状态吗？')) return;
+    sessionStorage.removeItem('uakira_studio_auth');
+    localStorage.removeItem('uakira_studio_auth');
+    closeWebStudio();
+  };
+
+  // 渲染右侧预览
+  window.wsRenderPreview = function() {
+    const title = document.getElementById('wsInputTitle')?.value || '文章标题预览';
+    const cover = (document.getElementById('wsInputCover')?.value || '').trim();
+    const tagsStr = document.getElementById('wsInputTags')?.value || '';
+    const rawMd = document.getElementById('wsMarkdownInput')?.value || '';
+
+    // 标题
+    document.getElementById('wsPreviewTitle').innerText = title;
+    
+    // 日期
+    const nowStr = new Date().toISOString().split('T')[0];
+    document.getElementById('wsPreviewDate').innerText = nowStr;
+
+    // 标签徽标
+    const tagsArr = tagsStr.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    const tagsContainer = document.getElementById('wsPreviewTagsContainer');
+    if (tagsContainer) {
+      tagsContainer.innerHTML = tagsArr.map(t => `<span class="ws-preview-tag">#${t}</span>`).join('');
+    }
+
+    // 封面图处理
+    const coverBox = document.getElementById('wsPreviewCoverBox');
+    const coverImg = document.getElementById('wsPreviewCoverImg');
+    const coverBadge = document.getElementById('wsCoverBadge');
+    const coverThumb = document.getElementById('wsCoverThumb');
+
+    if (cover) {
+      coverBox.style.display = 'block';
+      coverImg.src = cover;
+      coverBadge.style.display = 'inline-flex';
+      coverThumb.src = cover;
+    } else {
+      coverBox.style.display = 'none';
+      coverBadge.style.display = 'none';
+    }
+
+    // 正文 Markdown 渲染
+    const previewBody = document.getElementById('wsPreviewContent');
+    if (previewBody) {
+      if (window.marked) {
+        previewBody.innerHTML = marked.parse(rawMd || '*（请在左侧输入 Markdown 正文）*');
+      } else {
+        previewBody.innerHTML = (rawMd || '').replace(/\n/g, '<br>');
+      }
+    }
+
+    // 字数统计
+    document.getElementById('wsWordCount').innerText = '字数: ' + rawMd.length;
+  };
+
+  // 新建文章
+  window.wsNewPost = function() {
+    if (document.getElementById('wsMarkdownInput').value && !confirm('确定新建空白博文吗？当前未保存内容将被重置。')) return;
+    document.getElementById('wsInputTitle').value = '';
+    document.getElementById('wsInputCover').value = '';
+    document.getElementById('wsInputTags').value = '';
+    document.getElementById('wsInputCategory').value = '';
+    document.getElementById('wsInputFilename').value = 'post-' + Date.now() + '.md';
+    document.getElementById('wsMarkdownInput').value = '';
+    wsRenderPreview();
+  };
+
+  // 生成完整包含 Frontmatter 的 Markdown 文本
+  function generateFullFrontmatterMarkdown() {
+    const title = (document.getElementById('wsInputTitle')?.value || '未命名文章').trim();
+    const cover = (document.getElementById('wsInputCover')?.value || '').trim();
+    const tags = (document.getElementById('wsInputTags')?.value || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    const category = (document.getElementById('wsInputCategory')?.value || '').trim();
+    const rawMd = (document.getElementById('wsMarkdownInput')?.value || '').trim();
+    const dateStr = new Date().toISOString();
+
+    let fm = '---\n';
+    fm += `title: ${title}\n`;
+    fm += `date: '${dateStr}'\n`;
+    if (cover) fm += `cover: ${cover}\n`;
+    if (tags.length) fm += `tags:\n${tags.map(t => '  - ' + t).join('\n')}\n`;
+    if (category) fm += `categories:\n  - ${category}\n`;
+    fm += `author: uakira\n`;
+    fm += '---\n\n';
+    fm += rawMd + '\n';
+    return fm;
   }
 
-  // 点击遮罩外侧关闭
-  document.getElementById('studio-login-modal-overlay')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-      closeStudioLoginModal();
+  // 复制完整 Markdown
+  window.wsCopyMarkdown = function() {
+    const full = generateFullFrontmatterMarkdown();
+    navigator.clipboard.writeText(full).then(() => {
+      alert('🎉 完整博文 Markdown（含 YAML 独立封面与元数据）已复制到剪贴板！');
+    }).catch(e => {
+      alert('复制出错: ' + e.message);
+    });
+  };
+
+  // 导出/下载 .md 文件
+  window.wsDownloadMdFile = function() {
+    const full = generateFullFrontmatterMarkdown();
+    let fname = (document.getElementById('wsInputFilename')?.value || '').trim();
+    if (!fname) fname = (document.getElementById('wsInputTitle')?.value || 'post').trim() + '.md';
+    if (!fname.endsWith('.md')) fname += '.md';
+
+    const blob = new Blob([full], { type: 'text/markdown;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fname;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  // 保存本地草稿
+  window.wsSaveDraft = function() {
+    const data = {
+      title: document.getElementById('wsInputTitle').value,
+      cover: document.getElementById('wsInputCover').value,
+      tags: document.getElementById('wsInputTags').value,
+      category: document.getElementById('wsInputCategory').value,
+      filename: document.getElementById('wsInputFilename').value,
+      content: document.getElementById('wsMarkdownInput').value,
+      time: Date.now()
+    };
+    localStorage.setItem('ws_draft_post', JSON.stringify(data));
+    alert('💾 草稿已保存在浏览器本地！即使关闭网页也不会丢失。');
+  };
+
+  // 一键发布处理（支持本地后台桥接与 GitHub API）
+  window.wsPublish = async function() {
+    const title = (document.getElementById('wsInputTitle')?.value || '').trim();
+    let fname = (document.getElementById('wsInputFilename')?.value || '').trim();
+    if (!fname) fname = 'post-' + Date.now() + '.md';
+    if (!fname.endsWith('.md')) fname += '.md';
+    const cover = (document.getElementById('wsInputCover')?.value || '').trim();
+    const tags = (document.getElementById('wsInputTags')?.value || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    const categories = (document.getElementById('wsInputCategory')?.value || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    const body = document.getElementById('wsMarkdownInput')?.value || '';
+
+    if (!title) return alert('请先输入文章标题！');
+
+    // 检查本地 Studio 后台是否在线（如果在线，自动桥接保存并自动部署）
+    try {
+      const ping = await fetch('http://127.0.0.1:5000/api/status', { method: 'GET', mode: 'cors' }).catch(() => null);
+      if (ping && ping.ok) {
+        const saveRes = await fetch('http://127.0.0.1:5000/api/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: fname,
+            title: title,
+            tags: tags,
+            categories: categories,
+            cover: cover || null,
+            body: body
+          })
+        });
+
+        if (saveRes.ok) {
+          if (confirm('🎉 文章已成功同步至本地博客库！\n\n是否立即一键编译并推送到 GitHub Pages？')) {
+            alert('🚀 正在后台执行全量编译部署，预计 30 秒内上线！');
+            fetch('http://127.0.0.1:5000/api/hexo/deploy', { method: 'POST' });
+          }
+          return;
+        }
+      }
+    } catch(e) {}
+
+    // 本地不在线时，提示导出或复制
+    if (confirm('💡 检测到当前在纯网页环境（本地编译服务未开启）。\n\n是否立即复制完整博文代码，或直接下载保存为 .md 文件？')) {
+      wsDownloadMdFile();
+      wsCopyMarkdown();
+    }
+  };
+
+  // =======================================================
+  // 3. 纯前端集成 Gemini 3.8 Flash AI Copilot
+  // =======================================================
+  async function callGeminiApi(promptText) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${PRIMARY_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+    let resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: promptText }] }]
+      })
+    });
+
+    if (!resp.ok) {
+      // 容灾平滑切换到 2.5
+      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/${FALLBACK_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+      resp = await fetch(fallbackUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: promptText }] }]
+        })
+      });
+    }
+
+    if (!resp.ok) throw new Error('API 返回异常 ' + resp.status);
+    const data = await resp.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  }
+
+  // AI 帮我写博文
+  window.wsAiGeneratePost = async function() {
+    const topic = prompt('✨ 请输入您想让 Gemini 撰写的文章主题或大纲思路：', document.getElementById('wsInputTitle').value || '关于具身智能机器人视觉感知的工程实践');
+    if (!topic) return;
+
+    const btn = document.getElementById('wsBtnAiWrite');
+    btn.disabled = true;
+    btn.innerText = 'AI 正在全力构思创作中...';
+
+    const promptText = `你是一名专业的技术博主与计算机科学研究者。请根据主题：“${topic}”，撰写一篇结构清晰、内容翔实、排版精美的中文技术博文（Markdown 格式）。包含引言、关键原理解析、工程踩坑与解决思路、总结。语言生动、硬核客观，不要空洞废话。`;
+
+    try {
+      const generated = await callGeminiApi(promptText);
+      document.getElementById('wsMarkdownInput').value = generated;
+      if (!document.getElementById('wsInputTitle').value) {
+        document.getElementById('wsInputTitle').value = topic;
+      }
+      wsRenderPreview();
+      alert('🎉 Gemini 已成功为您生成博文草稿！');
+    } catch(e) {
+      alert('AI 生成出错: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'AI 帮我写博文';
+    }
+  };
+
+  // AI 润色
+  window.wsAiPolishText = async function() {
+    const current = document.getElementById('wsMarkdownInput').value;
+    if (!current.trim()) return alert('请先在左侧输入需要润色的文章正文！');
+
+    const btn = document.getElementById('wsBtnAiPolish');
+    btn.disabled = true;
+    btn.innerText = 'AI 润色中...';
+
+    const promptText = `请对以下 Markdown 文章进行专业润色，修正错别字与语病，优化语句通顺度，使文字更加专业、精炼并保持 Markdown 格式不变：\n\n${current}`;
+
+    try {
+      const polished = await callGeminiApi(promptText);
+      document.getElementById('wsMarkdownInput').value = polished;
+      wsRenderPreview();
+      alert('✨ 文章已成功完成润色优化！');
+    } catch(e) {
+      alert('AI 润色出错: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'AI 润色文本';
+    }
+  };
+
+  // 智能续写
+  window.wsAiContinueText = async function() {
+    const current = document.getElementById('wsMarkdownInput').value;
+    if (!current.trim()) return alert('请先输入上文以便续写！');
+
+    const btn = document.getElementById('wsBtnAiContinue');
+    btn.disabled = true;
+    btn.innerText = 'AI 正在推导续写中...';
+
+    const promptText = `请基于以下博文的上文内容，自然承接并往下续写 2-3 个段落，保持风格和话题一致：\n\n${current.slice(-1500)}`;
+
+    try {
+      const appended = await callGeminiApi(promptText);
+      document.getElementById('wsMarkdownInput').value += '\n\n' + appended;
+      wsRenderPreview();
+    } catch(e) {
+      alert('AI 续写出错: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '智能续写下文';
+    }
+  };
+
+  // 提取标签与分类
+  window.wsAiSuggestMeta = async function() {
+    const current = document.getElementById('wsMarkdownInput').value;
+    if (!current.trim()) return alert('请先输入文章正文以便分析！');
+
+    const btn = document.getElementById('wsBtnAiMeta');
+    btn.disabled = true;
+    btn.innerText = 'AI 分析中...';
+
+    const promptText = `请阅读以下文章，提炼出 3-5 个最相关的标签（用逗号隔开），并指定 1 个最贴切的分类名称。必须只以严格的 JSON 格式输出，如：{"tags": ["具身智能", "机器人", "ROS2"], "category": "技术探索"}。文章内容：\n\n${current.slice(0, 2000)}`;
+
+    try {
+      const res = await callGeminiApi(promptText);
+      const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+      if (parsed.tags) document.getElementById('wsInputTags').value = parsed.tags.join(', ');
+      if (parsed.category) document.getElementById('wsInputCategory').value = parsed.category;
+      wsRenderPreview();
+      alert(`🏷️ 标签与分类已自动分析并填入！\n标签: ${parsed.tags?.join(', ')}\n分类: ${parsed.category}`);
+    } catch(e) {
+      alert('提炼结果：\n' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'AI 提炼标签与分类';
+    }
+  };
+
+  // 快捷键支持：Ctrl + S 保存草稿，Esc 退出
+  window.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      const ws = document.getElementById('web-studio-workspace');
+      if (ws && ws.classList.contains('open')) {
+        e.preventDefault();
+        wsSaveDraft();
+      }
     }
   });
+})();
 </script>
 
 	</body>
