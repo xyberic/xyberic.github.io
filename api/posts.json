@@ -17,31 +17,5 @@
       "关于本人"
     ],
     "body": "嗨，我是 **肖宇彬 (uakira / xyberic)**。\n\n目前是 **上海纽约大学 (NYU Shanghai)** 数学与计算机科学专业本科在读。主要关注与研究方向包括：**具身智能 (Embodied AI)**、**机器人视觉感知**、**机械臂运动规划**以及**边缘端推理加速 (TensorRT)**。\n\n平时喜欢折腾开源软硬件工具、倒腾各种有趣的技术栈，也是个热爱 ACGN 的二次元。这里是我的个人小站，记录一些真实的技术排障历程、项目复盘与日常思考。\n\n---\n\n## 🏛 教育背景 (Education)\n\n- **上海纽约大学 (NYU Shanghai)** | 本科在读 (2025.09 – 至今)\n  - **专业**：数学与计算机科学 (Mathematics & Computer Science)\n  - **GPA**：**3.795 / 4.0**\n  - **语言与学术训练**：全英文教学与学术研讨环境，雅思 7.0；具备高强度英文文献检索、论文研读与跨文化团队协作能力。\n- **上海市延安中学** | 科技理科实验班 (2022.09 – 2025.07)\n  - 自主招生录取，高中阶段接受数理竞赛思维与逻辑训练；曾任英语课代表、班级宣传委员。\n\n---\n\n## 💼 实习经历 (Work & Internship)\n\n### 速度科技 (SuDo Technology) · 技术研发部 | 具身智能 / 机器人研发实习生 (大脑方向)\n*2026.05 – 2026.08 (约 3 个月) | 上海*\n\n在实习期间主要负责机器人具身大脑感知链路打通、多模态视觉模型选型重训、机械臂运动规划与多场景真机压力测试联调。\n\n#### 1. 视觉感知数据闭环构建与底层排障 (`RoboDataEngine` & `RoboPerception`)\n- **全流程闭环打通**：独立打通并固化“SAM 3 自动预标注 --> Label Studio 人工微调审核 --> 数据集切分 --> RF-DETR 训练 --> TensorRT `.engine` 量化导出”全链路。\n- **源码级 Bug 修复与显存优化**：\n  - 针对 Meta 官方 `facebook/sam3` 线上鉴权 401 及本地单 `.pt` 文件缺失 `config.json` 报错，重构 `segmentation.py`，新增基于原生接口加载本地权重的回退逻辑；\n  - 在推理例程中加入显式资源释放与 `torch.cuda.empty_cache()` 回收，彻底解决批量推理时的 CUDA OOM（显存溢出）；\n  - 定位并修复 `rde train` 训练 RF-DETR small 时触发的 Pydantic `ValidationError`，正确隔离训练参数与模型构建参数；\n  - 解决 NumPy 2.x 破坏底层 C-API 兼容与 setuptools 移除 `pkg_resources` 的冲突，锁定环境版本依赖，补齐 `polygraphy`，打通 TensorRT 部署链路。\n- **多场景数据集交付**：主导完成 WAIC 电池盒（648张重标消除边缘模糊）、17楼咖啡机（258张高质量人工精标，按 198:25:25 切分）、放置箱（102张）等千张级数据集标定、模型重训与部署验证。\n\n#### 2. WAIC 展会项目攻坚：电池盒抓放与电芯插拔 (`pick_place_battery_box` & 41号机)\n- **暗色同色抗干扰攻坚**：展会现场将电池底板更换为黑色后，与电池盒顶盖同色导致原 SAM 3 视觉分割彻底失效。横向对比测试 `LocateAnything` 与 `RF-DETR`，选定暗色边缘与中心点更稳定的 **RF-DETR**，完成 41 号机实机部署，并远程协助 WAIC 现场完成调参替换。\n- **高强度实机极限压测**：累计完成 76 轮电芯插拔测试及单日 12 组共 143 次循环抓放测试；系统性排查出放置重着陆、夹爪接触推移底板、偏心抓取等十余项物理交互缺陷。\n- **硬件与时序排障**：排查并修复新模型上线后的 TF 坐标变换轴反向 Bug（机械臂逆向运动）；定位系统初始化过快（网络硬件接口未就绪即发起调用）导致的相机断连问题，通过增加时序缓冲彻底根治。\n\n#### 3. 41号机测试板搬运与双臂协同演进 (`flex_test`)\n- **三代系统架构演进**：全程深度参与“单臂全流程 --> 去中转台双检测平台（模拟底盘移动）--> 双臂协同抓取与四平台窄爪”三轮软硬件迭代。\n- **运动规划排障**：排查出机械臂不走路点的根因是导轨（rail）高度偏低、安全包络（空气墙）过高导致路点被系统过滤，协同解决导轨高频掉线故障；\n- **视觉伺服与夹爪调优**：定位右爪相机焦距导致的二维码识别率瓶颈，推动更换左相机；优化 IBVS 视觉伺服作业高度降低测试板冲击，完成 20 秒持续夹持等极限防滑与机械干涉测试。\n\n#### 4. 咖啡机抓放项目 (`pick_place_coffee_cup`)\n- 开展“杯架 --> 模拟平台 --> 侧台”全流程实机测试，定位出前后排间距小于 2.2cm 时的视觉粘连、1~2cm 放置位移等边界问题，完成 258 张图像 RF-DETR 重训并联调上线。\n\n---\n\n## 🚀 科研与项目经历 (Projects)\n\n- **“主动探测防酒驾系统”· 跨学科软硬件研发 (2024)**  \n  *上海市青少年科技创新大赛 · 二等奖 (市级)*  \n  负责多路传感器数据链路搭建，将原始电信号清洗映射为具有鲁棒性的逻辑阈值模型；以准确率（Accuracy）、精确率（Precision）和召回率（Recall）为基准评估指标针对复杂现实环境调优算法参数，大幅压低误报率。\n- **英语科技传播与跨文化交流 (2023 – 2024)**  \n  *上海市中学生科普英语竞赛 · 三等奖 (市级)*  \n  擅长将复杂的硬核算法与机器人前沿机制解构成清晰易懂的工程语言；具备优秀的跨文化沟通与推动团队共识形成能力。\n\n---\n\n## 💼 实践经历 (Social Practice)\n\n- **上海纽约大学 IMA Lab (交互媒体艺术实验室) · 学生助理** (2025.09 – 至今)  \n  负责实验室各类前沿硬件元器件、单片机及交互套件的管理与软硬件维护；为本科学生提供基础电路搭建、软硬件通信（串口/网络通信）排障与技术支持。\n- **“思想者新年论坛”· 志愿服务** (2025.01)  \n  由观察者网与 S-tron 联合举办，负责现场高规格学者与投资人接待、突发日程应急协调。\n\n---\n\n## 🛠 技术栈清单 (Skills & Toolchain)\n\n- **机器人与运动控制**：ROS 2 (`rclpy`, `colcon`, `TF2` 坐标变换树)、机械臂运动规划 (MoveIt! / OMPL / 示教路点规划)、IBVS 视觉伺服、手眼标定 (Eye-in-Hand / Eye-to-Hand)\n- **视觉感知与深度学习**：SAM 3、RF-DETR (small)、LocateAnything、OpenCV、TensorRT (`.engine` 导出与量化加速)、CUDA 显存管理\n- **工程开发与数据流**：Python (OOP, Pydantic, Conda 依赖管理)、RoboDataEngine、RoboPerception、Label Studio、Git、Linux (Ubuntu)\n- **数理功底**：微积分、线性代数、概率论与数理统计\n- **外语能力**：英语（学术级读写与全英文流畅沟通，雅思 7.0）\n\n---\n\n## 🏆 个人荣誉 (Honors & Awards)\n\n- **科技创新类**：\n  - 上海市青少年科技创新大赛 二等奖、三等奖\n  - 上海市青少年物理实验竞赛 二等奖\n  - 上海市“未来杯”高校学生科技创新大赛 二等奖\n- **人文与社科类**：\n  - 第16届、第17届全国中小学生创新作文大赛 二等奖\n  - 第九届全国中学生科普科幻作文大赛 上海赛区三等奖\n  - 上海市中学生科普英语竞赛 三等奖\n\n---\n\n## 📬 联系方式 (Contact)\n\n- **Email**: [yx4148@nyu.edu](mailto:yx4148@nyu.edu) / [xyb070518@hotmail.com](mailto:xyb070518@hotmail.com)\n- **GitHub**: [github.com/xyberic](https://github.com/xyberic)\n- **Bilibili**: [space.bilibili.com/3494369394952807](https://space.bilibili.com/3494369394952807)\n"
-  },
-  {
-    "title": "Test",
-    "date": "2025-10-30T11:37:00.000Z",
-    "updated": "2025-11-04T07:56:50.327Z",
-    "path": "Untitled/",
-    "permalink": "https://xyberic.github.io/Untitled/",
-    "slug": "Untitled",
-    "filename": "Untitled.md",
-    "cover": "",
-    "tags": [],
-    "categories": [],
-    "body": "This is only a post for testing."
-  },
-  {
-    "title": "Alert",
-    "date": "2025-10-29T23:34:43.109Z",
-    "updated": "2026-10-16T08:37:08.557Z",
-    "path": "Alert/",
-    "permalink": "https://xyberic.github.io/Alert/",
-    "slug": "Alert",
-    "filename": "Alert.md",
-    "cover": "",
-    "tags": [],
-    "categories": [],
-    "body": "\nThe site is currently under construction.\n\n该站目前正在建设中 : )\n"
   }
 ]
