@@ -684,6 +684,7 @@
 
 <script>
 (function() {
+  const GEMINI_API_KEY = "AIzaSyCiYAuwah1SFcUaFvkpxOAgLH9tpfTMVAg";
   const PRIMARY_MODEL = "gemini-3.8-flash";
   const FALLBACK_MODEL = "gemini-2.5-flash";
 
@@ -753,10 +754,13 @@
       // 优先调用 3.8 模型
       let resp = await requestGemini(conversationHistory, PRIMARY_MODEL);
 
-      // 若 3.8 遇到 503 (官方负载过高) 或 429，无缝自动降级到稳定版，用户零感知
-      if (!resp.ok && (resp.status === 503 || resp.status === 429 || resp.status === 404)) {
+      // 若 3.8 遇到 503 (官方负载过高)、429 或其他异常，无缝自动降级到稳定版，用户零感知
+      if (!resp.ok) {
         console.warn(`[Gemini] ${PRIMARY_MODEL} 状态码 ${resp.status}，正在自动平滑切换至稳定节点...`);
-        resp = await requestGemini(conversationHistory, FALLBACK_MODEL);
+        const fallbackResp = await requestGemini(conversationHistory, FALLBACK_MODEL);
+        if (fallbackResp.ok) {
+          resp = fallbackResp;
+        }
       }
 
       loadingElem.remove();
